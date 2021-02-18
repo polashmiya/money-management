@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ExpenseModule } from './modules/expense/expense.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -14,7 +16,9 @@ import { ExpenseModule } from './modules/expense/expense.module';
       autoLoadEntities: true,
       synchronize: true
     }),
-    ExpenseModule
+    ExpenseModule,
+    AuthModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
