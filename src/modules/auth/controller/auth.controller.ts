@@ -18,4 +18,12 @@ export class AuthController {
         );
     }
 
+    @Post('signin')
+    signin(@Body() user: User): Observable<Object> {
+        return this.authService.signin(user).pipe(
+            map((jwtToken: string) => ({ "x-auth-token": jwtToken })),
+            catchError(err => of({ error: err.message }))
+        );
+    }
+
 }
