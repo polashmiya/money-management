@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
 
 @Entity()
 export class ExpenseEntity {
@@ -6,15 +6,21 @@ export class ExpenseEntity {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column({ nullable: true })
+    @Column()
     description: string;
 
-    @Column({ nullable: true })
+    @Column()
     amount: number;
 
     @Column({ default: "expense" })
     type: string;
 
     @CreateDateColumn({ type: 'date' })
-    date: Date
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @VersionColumn()
+    version: number;
 }

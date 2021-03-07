@@ -1,5 +1,8 @@
+import { ResponceData } from './../../../model/responce-data.model';
+import { responceData } from './../../../utils/responce-data.util';
+import { map, mergeMap } from 'rxjs/operators';
 import { ExpenseEntity } from '../entity/expense.entity';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Expense } from '../model/expense.model';
@@ -11,25 +14,80 @@ export class ExpenseService {
         @InjectRepository(ExpenseEntity) private readonly expenseRepository: Repository<ExpenseEntity>
     ) { }
 
-    getAll(): Observable<Expense[]> {
-        return from(this.expenseRepository.find({}));
+    getAll(): Observable<ResponceData> {
+        return from(this.expenseRepository.find({})).pipe(
+            map((data) => {
+                return responceData(
+                    "Get Data Success",
+                    HttpStatus.OK,
+                    data
+                )
+            })
+        );
     }
 
-    getById(id: number): Observable<Expense> {
-        return from(this.expenseRepository.findOne(id))
+    getById(id: number): Observable<ResponceData> {
+        return from(this.expenseRepository.findOne(id)).pipe(
+            map((data) => {
+                if (data) {
+                    return responceData(
+                        "Get Data Success",
+                        HttpStatus.OK,
+                        data
+                    );
+                } else {
+                    throw new NotFoundException();
+                }
+            })
+        );
     }
 
-    create(expense: Expense): Observable<Expense> {
-        console.log(expense)
-        return from(this.expenseRepository.save(expense));
+    create(expense: Expense): Observable<ResponceData> {
+        return from(this.expenseRepository.save(expense)).pipe(
+            map((data) => {
+                return responceData(
+                    "Create Success",
+                    HttpStatus.CREATED,
+                    data
+                );
+            })
+        );
     }
 
-    update(id: number, expense: Expense): Observable<any> {
-        return from(this.expenseRepository.update(id, expense));
+    update(id: string, expense: Expense): Observable<ResponceData> {
+        return from(this.expenseRepository.update(id, expense)).pipe(
+            mergeMap((resData) => {
+                if (resData.affected === 1) {
+                    return from(this.expenseRepository.findOne({ id })).pipe(
+                        map((data) => {
+                            return responceData(
+                                "Update Success",
+                                HttpStatus.OK,
+                                data
+                            );
+                        })
+                    )
+                } else {
+                    throw new NotFoundException();
+                }
+
+            })
+        );
     }
 
-    delete(id: number): Observable<any> {
-        return from(this.expenseRepository.delete(id));
+    delete(id: number) {
+        return from(this.expenseRepository.delete(id)).pipe(
+            map((data) => {
+                if (data.affected === 1) {
+                    return responceData(
+                        "Delete Success",
+                        HttpStatus.OK
+                    );
+                } else {
+                    throw new NotFoundException();
+                }
+            })
+        );
     }
 
 }
