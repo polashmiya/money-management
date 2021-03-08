@@ -11,10 +11,15 @@ import { UserModule } from './modules/user/user.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: "postgres",
-      url: process.env.DATABASE_URL,
-      autoLoadEntities: true,
-      synchronize: true
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      autoLoadEntities: Boolean(process.env.DB_AUTO_LOAD_ENTITIES),
+      synchronize: Boolean(process.env.DB_SYNCHRONIZE),
+      logging: Boolean(process.env.DB_LOGGING),
     }),
     ExpenseModule,
     AuthModule,
