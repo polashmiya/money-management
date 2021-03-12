@@ -5,10 +5,8 @@ import { ExpenseController } from './controller/expense.controller';
 import { ExpenseService } from './service/expense.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ExpenseEntity])
-  ],
+  imports: [TypeOrmModule.forFeature([ExpenseEntity])],
   controllers: [ExpenseController],
-  providers: [ExpenseService]
+  providers: [ExpenseService],
 })
-export class ExpenseModule { }
+export class ExpenseModule {}

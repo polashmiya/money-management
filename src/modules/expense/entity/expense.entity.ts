@@ -1,26 +1,32 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  VersionColumn,
+} from 'typeorm';
 
-@Entity("expenses")
+@Entity('expenses')
 export class ExpenseEntity {
+  @PrimaryGeneratedColumn()
+  id: string;
 
-    @PrimaryGeneratedColumn()
-    id: string;
+  @Column()
+  description: string;
 
-    @Column()
-    description: string;
+  @Column()
+  amount: number;
 
-    @Column()
-    amount: number;
+  @Column({ default: 'expense' })
+  type: string;
 
-    @Column({ default: "expense" })
-    type: string;
+  @CreateDateColumn({ type: 'date' })
+  createdAt: Date;
 
-    @CreateDateColumn({ type: 'date' })
-    createdAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
-
-    @VersionColumn()
-    version: number;
+  @VersionColumn()
+  version: number;
 }

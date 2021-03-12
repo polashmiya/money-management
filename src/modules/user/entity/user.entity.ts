@@ -1,40 +1,43 @@
-import { BeforeInsert, CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  CreateDateColumn,
+  UpdateDateColumn,
+  VersionColumn,
+} from 'typeorm';
 import { Column, Entity } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("users")
+@Entity('users')
 export class UserEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+  @Column()
+  name: string;
 
-    @Column()
-    name: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column()
+  password: string;
 
-    @Column()
-    password: string;
+  @Column()
+  gender: string;
 
-    @Column()
-    gender: string;
+  @Column({ type: 'date' })
+  dob: Date;
 
-    @Column({ type: 'date' })
-    dob: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date
+  @VersionColumn()
+  version: number;
 
-    @VersionColumn()
-    version: number
-
-    @BeforeInsert()
-    emailLowerCase() {
-        this.email = this.email.toLowerCase();
-    }
-
+  @BeforeInsert()
+  emailLowerCase() {
+    this.email = this.email.toLowerCase();
+  }
 }

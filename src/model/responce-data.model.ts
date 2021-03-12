@@ -1,6 +1,5 @@
 export interface ResponceData {
-
-    message: string;
-    statusCode: number;
-    data?: any;
+  message: string;
+  statusCode: number;
+  data?: any;
 }

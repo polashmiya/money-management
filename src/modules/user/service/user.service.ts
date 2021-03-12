@@ -8,42 +8,41 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
-    constructor(
-        @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
-    ) { }
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
 
+  getAll(): Observable<User[]> {
+    return from(this.userRepository.find({})).pipe(
+      map((users: User[]) => {
+        users.forEach((user: User) => {
+          delete user.password;
+          return user;
+        });
 
-    getAll(): Observable<User[]> {
-        return from(this.userRepository.find({})).pipe(
-            map((users: User[]) => {
-                users.forEach((user: User) => {
-                    delete user.password;
-                    return user;
-                });
+        return users;
+      }),
+    );
+  }
 
-                return users;
-            })
-        );
-    }
-
-    getById(id: string): Observable<User> {
-        return from(this.userRepository.findOne(id)).pipe(
-            map((user) => {
-                delete user.password;
-                return user;
-            })
-        );
-    }
-
-
-    update(id: string, user: User) {
-        delete user.email;
+  getById(id: string): Observable<User> {
+    return from(this.userRepository.findOne(id)).pipe(
+      map((user) => {
         delete user.password;
+        return user;
+      }),
+    );
+  }
 
-        return from(this.userRepository.update(id, user));
-    }
+  update(id: string, user: User) {
+    delete user.email;
+    delete user.password;
 
-    delete(id: string): Observable<any> {
-        return from(this.userRepository.delete(id));
-    }
+    return from(this.userRepository.update(id, user));
+  }
+
+  delete(id: string): Observable<any> {
+    return from(this.userRepository.delete(id));
+  }
 }
