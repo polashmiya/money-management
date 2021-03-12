@@ -8,18 +8,18 @@ import { UserModule } from '../user/user.module';
 import { UserEntity } from '../user/entity/user.entity';
 
 @Module({
-    imports: [
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async () => ({
-                secret: process.env.JWT_SECRET,
-                signOptions: { expiresIn: "24h" }
-            })
-        }),
-        TypeOrmModule.forFeature([UserEntity]),
-        UserModule
-    ],
-    providers: [AuthService],
-    controllers: [AuthController]
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: '24h' },
+      }),
+    }),
+    TypeOrmModule.forFeature([UserEntity]),
+    UserModule,
+  ],
+  providers: [AuthService],
+  controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}

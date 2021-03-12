@@ -17,9 +17,10 @@ import { UserModule } from './modules/user/user.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DATABASE_NAME,
-      autoLoadEntities: Boolean(process.env.DB_AUTO_LOAD_ENTITIES),
-      synchronize: Boolean(process.env.DB_SYNCHRONIZE),
-      logging: Boolean(process.env.DB_LOGGING),
+      autoLoadEntities:
+        process.env.DB_AUTO_LOAD_ENTITIES === 'true' ? true : false,
+      synchronize: process.env.DB_SYNCHRONIZE === 'true' ? true : false,
+      logging: process.env.DB_LOGGING === 'true' ? true : false,
     }),
     ExpenseModule,
     AuthModule,
