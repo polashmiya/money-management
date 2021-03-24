@@ -1,10 +1,16 @@
-import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { User } from '../model/user.model';
+import { UpdateUserDto } from './../dto/user.dto';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entity/user.entity';
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ResponceData } from 'src/model/responce-data.model';
+import { responceData } from 'src/utils/responce-data.util';
 
 @Injectable()
 export class UserService {
@@ -13,36 +19,66 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  getAll(): Observable<User[]> {
-    return from(this.userRepository.find({})).pipe(
-      map((users: User[]) => {
-        users.forEach((user: User) => {
-          delete user.password;
-          return user;
-        });
+  async getAll(): Promise<ResponceData> {
+    try {
+      const [users, count] = await this.userRepository.findAndCount({});
+      const data = { users, total: count };
 
-        return users;
-      }),
-    );
+      return responceData('Get User Success', HttpStatus.OK, data);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
-  getById(id: string): Observable<User> {
-    return from(this.userRepository.findOne(id)).pipe(
-      map((user) => {
-        delete user.password;
-        return user;
-      }),
-    );
+  async getById(id: string): Promise<ResponceData> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+
+      if (!user) {
+        throw new NotFoundException();
+      }
+
+      return responceData('Get User Success', HttpStatus.OK, user);
+    } catch (error) {
+      if (error.status === HttpStatus.NOT_FOUND) {
+        throw new NotFoundException('User Not Found');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
-  update(id: string, user: User) {
-    delete user.email;
-    delete user.password;
+  async update(id: string, user: UpdateUserDto): Promise<ResponceData> {
+    try {
+      const updateRes = await this.userRepository.update(id, user);
 
-    return from(this.userRepository.update(id, user));
+      if (updateRes.affected) {
+        const findUser = await this.userRepository.findOne({ where: { id } });
+        return responceData('Update User Success', HttpStatus.OK, findUser);
+      } else {
+        throw new BadRequestException();
+      }
+    } catch (error) {
+      if (error.status === HttpStatus.BAD_REQUEST) {
+        throw new BadRequestException('Update User Failed');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
-  delete(id: string): Observable<any> {
-    return from(this.userRepository.delete(id));
+  async delete(id: string) {
+    try {
+      const res = await this.userRepository.delete(id);
+
+      if (res.affected) {
+        return responceData('Delete User Success', HttpStatus.OK, res);
+      } else {
+        throw new BadRequestException();
+      }
+    } catch (error) {
+      if (error.status === HttpStatus.BAD_REQUEST) {
+        throw new BadRequestException('Delete User Failed');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }

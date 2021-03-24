@@ -1,4 +1,6 @@
+import { compare, hash } from 'bcrypt';
 import {
+  BaseEntity,
   BeforeInsert,
   CreateDateColumn,
   UpdateDateColumn,
@@ -8,23 +10,23 @@ import { Column, Entity } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
-export class UserEntity {
+export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   gender: string;
 
-  @Column({ type: 'date' })
+  @Column({ nullable: true, type: 'date' })
   dob: Date;
 
   @CreateDateColumn()
@@ -39,5 +41,14 @@ export class UserEntity {
   @BeforeInsert()
   emailLowerCase() {
     this.email = this.email.toLowerCase();
+  }
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await hash(this.password, 12);
+  }
+
+  async comparePassword(password: string): Promise<boolean> {
+    return await compare(password, this.password);
   }
 }

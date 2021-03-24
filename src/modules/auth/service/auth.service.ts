@@ -1,12 +1,17 @@
-import { map, switchMap, catchError } from 'rxjs/operators';
-import { from, Observable, of, throwError } from 'rxjs';
-import { Injectable } from '@nestjs/common';
+import { responceData } from './../../../utils/responce-data.util';
+import {
+  ConflictException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../../user/model/user.model';
 import { UserEntity } from '../../user/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-const bcrypt = require('bcrypt');
+import { CreateUserDto, LoginDto } from 'src/modules/user/dto/user.dto';
+import { ResponceData } from 'src/model/responce-data.model';
 
 @Injectable()
 export class AuthService {
@@ -16,72 +21,40 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  signup(user: User): Observable<User> {
-    return this.hashPassword(user.password).pipe(
-      switchMap((hashPassword: string) => {
-        const newUserObj: User = this.userRepository.create({ ...user }); //create method is equal to  new User()
-        newUserObj.password = hashPassword;
+  async signup(userCredential: CreateUserDto): Promise<ResponceData> {
+    try {
+      const user = this.userRepository.create(userCredential);
+      await user.save();
 
-        return from(this.userRepository.save(newUserObj)).pipe(
-          map((data) => {
-            const { password, ...result } = data;
-            return result;
-          }),
-          catchError((error) => throwError(error)),
-        );
-      }),
-    );
+      return responceData('Sign Up Success', HttpStatus.CREATED);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('User Already Exist');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
-  signin(user: User): Observable<string | Error> {
-    return this.verifyUser(user.email, user.password).pipe(
-      switchMap((user: User) => {
-        if (user) {
-          return this.generateJWT(user).pipe(
-            map((jwtToken: string) => jwtToken),
-          );
-        }
-      }),
-      catchError((error) => throwError(error)),
-    );
-  }
+  async signin(userCredential: LoginDto): Promise<ResponceData> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: userCredential.email },
+        select: ['id', 'email', 'password'],
+      });
 
-  private verifyUser(
-    email: string,
-    password: string,
-  ): Observable<User | Error> {
-    return from(this.userRepository.findOne({ email })).pipe(
-      switchMap((user: User) => {
-        if (user) {
-          return this.comparePassword(password, user.password).pipe(
-            map((isMatch: boolean) => {
-              if (isMatch) {
-                const { password, ...result } = user;
-                return result;
-              } else {
-                throw Error('Invalid Credential');
-              }
-            }),
-          );
-        } else {
-          throw Error('Invalid Credential');
-        }
-      }),
-    );
-  }
+      if (user && (await user.comparePassword(userCredential.password))) {
+        const payload = { email: user.email, id: user.id };
+        const token = this.jwtService.sign(payload);
 
-  private generateJWT(user: User): Observable<string> {
-    return from(this.jwtService.signAsync({ user }));
-  }
+        return responceData('Login Success', HttpStatus.OK, { token });
+      }
 
-  private hashPassword(password: string): Observable<string> {
-    return from<string>(bcrypt.hash(password, 12));
-  }
-
-  private comparePassword(
-    password: string,
-    hashPassword: string,
-  ): Observable<boolean | any> {
-    return from<boolean | any>(bcrypt.compare(password, hashPassword));
+      throw new UnauthorizedException('Invalid Credentials');
+    } catch (error) {
+      if (error.status === HttpStatus.UNAUTHORIZED) {
+        throw new UnauthorizedException('Invalid Credentials');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }
