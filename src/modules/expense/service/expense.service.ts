@@ -1,12 +1,16 @@
+import { ExpenseDto } from './../dto/expence.dto';
 import { ResponceData } from './../../../model/responce-data.model';
 import { responceData } from './../../../utils/responce-data.util';
-import { map, mergeMap } from 'rxjs/operators';
 import { ExpenseEntity } from '../entity/expense.entity';
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Expense } from '../model/expense.model';
-import { from, Observable } from 'rxjs';
 
 @Injectable()
 export class ExpenseService {
@@ -15,59 +19,79 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<ExpenseEntity>,
   ) {}
 
-  getAll(): Observable<ResponceData> {
-    return from(this.expenseRepository.find({})).pipe(
-      map((data) => {
-        return responceData('Get Data Success', HttpStatus.OK, data);
-      }),
-    );
+  async getAll(): Promise<ResponceData> {
+    try {
+      const [expence, count] = await this.expenseRepository.findAndCount();
+      const data = { expence, total: count };
+
+      return responceData('Get Data Success', HttpStatus.OK, data);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
-  getById(id: number): Observable<ResponceData> {
-    return from(this.expenseRepository.findOne(id)).pipe(
-      map((data) => {
-        if (data) {
-          return responceData('Get Data Success', HttpStatus.OK, data);
-        } else {
-          throw new NotFoundException();
-        }
-      }),
-    );
+  async getById(id: string): Promise<ResponceData> {
+    try {
+      const data = await this.expenseRepository.findOne({ where: { id } });
+
+      if (!data) {
+        throw new NotFoundException();
+      }
+
+      return responceData('Get Data Success', HttpStatus.OK, data);
+    } catch (error) {
+      if (error.status === HttpStatus.NOT_FOUND) {
+        throw new NotFoundException('Expense or Income Not Found');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
-  create(expense: Expense): Observable<ResponceData> {
-    return from(this.expenseRepository.save(expense)).pipe(
-      map((data) => {
-        return responceData('Create Success', HttpStatus.CREATED, data);
-      }),
-    );
+  async create(expense: ExpenseDto): Promise<ResponceData> {
+    try {
+      const createExpense = this.expenseRepository.create(expense);
+      const expenseRes = await createExpense.save();
+
+      return responceData('Create Success', HttpStatus.OK, expenseRes);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
-  update(id: string, expense: Partial<Expense>): Observable<ResponceData> {
-    return from(this.expenseRepository.update(id, expense)).pipe(
-      mergeMap((resData) => {
-        if (resData.affected === 1) {
-          return from(this.expenseRepository.findOne({ id })).pipe(
-            map((data) => {
-              return responceData('Update Success', HttpStatus.OK, data);
-            }),
-          );
-        } else {
-          throw new NotFoundException();
-        }
-      }),
-    );
+  async update(
+    id: string,
+    expense: Partial<ExpenseDto>,
+  ): Promise<ResponceData> {
+    try {
+      const res = await this.expenseRepository.update(id, expense);
+
+      if (res.affected) {
+        const expenseRes = await this.expenseRepository.findOne({
+          where: { id },
+        });
+        return responceData('Update Success', HttpStatus.OK, expenseRes);
+      }
+      throw new BadRequestException();
+    } catch (error) {
+      if (error.status === HttpStatus.BAD_REQUEST) {
+        throw new BadRequestException('No Expense or Income found');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
-  delete(id: number) {
-    return from(this.expenseRepository.delete(id)).pipe(
-      map((data) => {
-        if (data.affected === 1) {
-          return responceData('Delete Success', HttpStatus.OK);
-        } else {
-          throw new NotFoundException();
-        }
-      }),
-    );
+  async delete(id: string): Promise<ResponceData> {
+    try {
+      const delRes = await this.expenseRepository.delete(id);
+      if (delRes.affected) {
+        return responceData('Delete Success', HttpStatus.OK);
+      }
+      throw new BadRequestException();
+    } catch (error) {
+      if (error.status === HttpStatus.BAD_REQUEST) {
+        throw new BadRequestException('No Expense or Income Found');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }

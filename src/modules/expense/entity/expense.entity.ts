@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -8,8 +9,8 @@ import {
 } from 'typeorm';
 
 @Entity('expenses')
-export class ExpenseEntity {
-  @PrimaryGeneratedColumn()
+export class ExpenseEntity extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -21,7 +22,10 @@ export class ExpenseEntity {
   @Column({ default: 'expense' })
   type: string;
 
-  @CreateDateColumn({ type: 'date' })
+  @Column({ type: 'date' })
+  expenseDate: Date;
+
+  @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
