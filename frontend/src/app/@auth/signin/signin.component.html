@@ -1,0 +1,43 @@
+<div class="body">
+    <div class="center-body">
+        <form>
+            <h1 class="heading">Sign In</h1>
+
+            <mat-form-field appearance="outline" class='full-width'>
+                <mat-label>Email</mat-label>
+                <input matInput type="text">
+                <mat-icon matSuffix>alternate_email</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class='full-width'>
+                <mat-label>Password</mat-label>
+                <input matInput type="password" [type]="hidePassword?'text':'password'">
+                <mat-icon matSuffix (click)="inversePasswordType()" style="cursor: pointer">
+                    {{hidePassword ? "visibility_off":"visibility"}}
+                </mat-icon>
+            </mat-form-field>
+
+            <button mat-button type="submit" class='submitBtn'>Sign In</button>
+
+            <div class="mb-3">
+                <span>Don't have an account? <a routerLink="/authentication/signup" class="signup-link">Sign Up</a>
+                </span>
+                <span class="pull-right mr-2"><a routerLink="#" class="signup-link">Forget password?</a></span>
+            </div>
+
+        </form>
+
+
+        <p class="social-text">Or Sign in with</p>
+
+        <div class="social-media">
+            <a href="#" class="social-icon">
+                <i class="fa fa-facebook"></i>
+            </a>
+            <a href="#" class="social-icon">
+                <i class="fa fa-google"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
