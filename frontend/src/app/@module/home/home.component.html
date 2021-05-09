@@ -1,1 +1,15 @@
-<h1>Welcome to home</h1>
+<div class='container'>
+    <div class="row">
+        <div class="col-sm">
+            <mat-calendar [selected]="date" (selectedChange)="onDateSelect($event)">
+            </mat-calendar>
+        </div>
+
+        <div class="col-sm" style="background-color:lavenderblush;">
+            <div class="row">
+                <div class="col-sm-8" style="background-color:lavender;">here the discription</div>
+                <div class="col-sm-4" style="background-color:lavenderblush;">here amount</div>
+            </div>
+        </div>
+    </div>
+</div>
