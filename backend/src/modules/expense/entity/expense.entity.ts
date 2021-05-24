@@ -1,8 +1,10 @@
+import { UserEntity } from 'src/modules/user/entity/user.entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
@@ -24,6 +26,9 @@ export class ExpenseEntity extends BaseEntity {
 
   @Column({ type: 'date' })
   expenseDate: Date;
+
+  @ManyToOne(() => UserEntity, (user) => user.expense, { onDelete: 'CASCADE' })
+  user: UserEntity;
 
   @CreateDateColumn()
   createdAt: Date;

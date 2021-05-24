@@ -1,8 +1,10 @@
+import { ExpenseEntity } from './../../expense/entity/expense.entity';
 import { compare, hash } from 'bcrypt';
 import {
   BaseEntity,
   BeforeInsert,
   CreateDateColumn,
+  OneToMany,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
@@ -28,6 +30,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ nullable: true, type: 'date' })
   dob: Date;
+
+  @OneToMany(() => ExpenseEntity, (expense) => expense.user)
+  expense: ExpenseEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
