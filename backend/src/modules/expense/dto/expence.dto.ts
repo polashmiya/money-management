@@ -1,17 +1,22 @@
-import { IsDate, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ExpenseDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   description: string;
 
-  @IsString()
+  @ApiProperty()
+  @IsNumber()
   @IsNotEmpty()
   amount: number;
 
+  @ApiPropertyOptional()
   @IsString()
   type?: string;
 
+  @ApiProperty()
   @IsDateString()
   @IsNotEmpty()
   expenseDate?: Date;

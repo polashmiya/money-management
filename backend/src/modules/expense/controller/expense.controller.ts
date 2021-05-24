@@ -11,7 +11,9 @@ import {
 } from '@nestjs/common';
 import { ResponceData } from 'src/model/responce-data.model';
 import { ExpenseService } from '../service/expense.service';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Expense')
 @Controller('expense')
 export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
@@ -32,6 +34,7 @@ export class ExpenseController {
   }
 
   @Put(':id')
+  @ApiBody({ type: ExpenseDto })
   update(
     @Param('id') id: string,
     @Body() expense: Partial<ExpenseDto>,
