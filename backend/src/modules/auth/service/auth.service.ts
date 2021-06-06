@@ -1,3 +1,4 @@
+import { LoginDTO } from './../dto/login.dto';
 import { responceData } from './../../../utils/responce-data.util';
 import {
   ConflictException,
@@ -10,8 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '../../user/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto, LoginDto } from 'src/modules/user/dto/user.dto';
 import { ResponceData } from 'src/model/responce-data.model';
+import { SignUpDTO } from '../dto/signup.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(userCredential: CreateUserDto): Promise<ResponceData> {
+  async signup(userCredential: SignUpDTO): Promise<ResponceData> {
     try {
       const user = this.userRepository.create(userCredential);
       await user.save();
@@ -35,7 +36,7 @@ export class AuthService {
     }
   }
 
-  async signin(userCredential: LoginDto): Promise<ResponceData> {
+  async signin(userCredential: LoginDTO): Promise<ResponceData> {
     try {
       const user = await this.userRepository.findOne({
         where: { email: userCredential.email },

@@ -1,29 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsDate,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
-
-export class LoginDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  email: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(6)
-  password: string;
-}
-
-export class CreateUserDto extends LoginDto {}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   @ApiProperty()
