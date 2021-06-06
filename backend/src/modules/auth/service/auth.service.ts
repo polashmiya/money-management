@@ -1,6 +1,7 @@
 import { LoginDTO } from './../dto/login.dto';
 import { responceData } from './../../../utils/responce-data.util';
 import {
+  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
@@ -13,6 +14,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ResponceData } from 'src/model/responce-data.model';
 import { SignUpDTO } from '../dto/signup.dto';
+import { ChangePasswordDTO } from '../dto/changePassword.dto';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -56,6 +59,51 @@ export class AuthService {
         throw new UnauthorizedException('Invalid Credentials');
       }
       throw new InternalServerErrorException();
+    }
+  }
+
+  async changePassword(userCredential: Partial<ChangePasswordDTO>) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: userCredential.email },
+        select: ['id', 'password'],
+      });
+
+      if (!user) {
+        throw new BadRequestException('Invalid Email or Password');
+      }
+
+      const isPasswordCorrect = await user.comparePassword(
+        userCredential.password,
+      );
+
+      if (!isPasswordCorrect) {
+        throw new BadRequestException('Invalid Email or Password');
+      }
+
+      const hashedPassword = await hash(
+        userCredential.newPassword,
+        Number(process.env.HASH_ROUNDS),
+      );
+
+      const updateRes = await this.userRepository.update(user.id, {
+        password: hashedPassword,
+      });
+
+      if (updateRes.affected) {
+        const data = await this.userRepository.findOne({
+          where: { email: userCredential.email },
+        });
+
+        return responceData('Password Update Success', HttpStatus.OK, data);
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (error) {
+      if (error.status === HttpStatus.BAD_REQUEST) {
+        throw new BadRequestException('Invalid Email or Password');
+      }
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 }
