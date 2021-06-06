@@ -15,7 +15,7 @@ import { Repository } from 'typeorm';
 import { ResponceData } from 'src/model/responce-data.model';
 import { SignUpDTO } from '../dto/signup.dto';
 import { ChangePasswordDTO } from '../dto/changePassword.dto';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -27,8 +27,13 @@ export class AuthService {
 
   async signup(userCredential: SignUpDTO): Promise<ResponceData> {
     try {
-      const user = this.userRepository.create(userCredential);
-      await user.save();
+      const hashedPassword = await hash(
+        userCredential.password,
+        Number(process.env.HASH_ROUNDS),
+      );
+      userCredential.password = hashedPassword;
+
+      const user = await this.userRepository.save(userCredential);
 
       return responceData('Sign Up Success', HttpStatus.CREATED);
     } catch (error) {
@@ -46,7 +51,10 @@ export class AuthService {
         select: ['id', 'email', 'password'],
       });
 
-      if (user && (await user.comparePassword(userCredential.password))) {
+      if (
+        user &&
+        (await this.comparePassword(userCredential.password, user.password))
+      ) {
         const payload = { email: user.email, id: user.id };
         const token = this.jwtService.sign(payload);
 
@@ -73,8 +81,9 @@ export class AuthService {
         throw new BadRequestException('Invalid Email or Password');
       }
 
-      const isPasswordCorrect = await user.comparePassword(
+      const isPasswordCorrect = await this.comparePassword(
         userCredential.password,
+        user.password,
       );
 
       if (!isPasswordCorrect) {
@@ -105,5 +114,12 @@ export class AuthService {
       }
       throw new InternalServerErrorException('Internal Server Error');
     }
+  }
+
+  private async comparePassword(
+    password: string,
+    hassedPassword: string,
+  ): Promise<boolean> {
+    return await compare(password, hassedPassword);
   }
 }

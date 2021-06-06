@@ -42,18 +42,4 @@ export class UserEntity extends BaseEntity {
 
   @VersionColumn()
   version: number;
-
-  @BeforeInsert()
-  emailLowerCase() {
-    this.email = this.email.toLowerCase();
-  }
-
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await hash(this.password, 12);
-  }
-
-  async comparePassword(password: string): Promise<boolean> {
-    return await compare(password, this.password);
-  }
 }
