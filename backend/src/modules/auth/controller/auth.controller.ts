@@ -1,6 +1,6 @@
 import { ChangePasswordDTO } from './../dto/changePassword.dto';
 import { LoginDTO } from './../dto/login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Post,
@@ -35,6 +35,7 @@ export class AuthController {
   }
 
   @Put('changePassword')
+  @ApiBody({ type: ChangePasswordDTO })
   changePassword(@Body(ValidationPipe) body: Partial<ChangePasswordDTO>) {
     try {
       return this.authService.changePassword(body);
