@@ -1,0 +1,268 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700;900&display=swap");
+
+:root {
+  --primary: #032541;
+  --secondary: #21d07a;
+  --white: #fff;
+}
+
+body {
+  font-family: "Source Sans Pro", sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+.btn {
+  padding: 10px 15px;
+  background-color: var(--secondary);
+  color: var(--primary);
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: inline-block;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  line-height: 1.1;
+}
+
+.btn:hover {
+  background-color: #1aa762;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+input:focus {
+  outline: none;
+}
+
+/* Header Styles */
+header {
+  background-color: var(--primary);
+}
+
+header .inner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+header a {
+  color: var(--white);
+  font-size: 1.25rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+header a:hover {
+  opacity: 0.7;
+}
+
+header .brand a {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+header .nav-links {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+header .nav-links li {
+  display: inline-block;
+  margin-right: 30px;
+}
+
+header .nav-links li:last-child {
+  margin-right: 0;
+}
+/* Login and Singup Styles */
+.form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+label {
+  display: flex;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+input {
+  width: 300px;
+  padding: 6px 13px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.747);
+  background: none;
+  border: 1px solid #000;
+  border-radius: 5px;
+}
+input:focus {
+  outline: none;
+  border: 1px solid rgba(110, 106, 106, 0.726);
+  border-radius: 5px;
+}
+
+.loginButton {
+  width: 100px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  outline: none;
+  border: 1px solid grey;
+  border-radius: 3px;
+}
+.btn {
+  text-align: center;
+}
+.form-control {
+  padding-bottom: 25px;
+}
+.errors {
+  color: red;
+}
+.link {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+/* Home Page style */
+.homePage {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 30px;
+}
+.left {
+  flex: 1;
+  margin-left: 50px;
+}
+.left .calender {
+  width: 90%;
+  height: 50vh;
+}
+.right {
+  flex: 1;
+  margin-right: 50px;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+/* Testing Purpose */
+.container1 {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+}
+.container1 .brand {
+  flex: 2;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-left: 50px;
+}
+.container1 .rightFlex {
+  display: flex;
+  flex: 1;
+  justify-content: space-around;
+}
+
+/* Dropdown Style */
+.dropDownIcon {
+  height: 50px;
+  width: 50px;
+}
+.dropDownIcon img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.dropDownBtn:hover,
+.dropDownBtn:focus {
+  background-color: #2980b9;
+}
+.dropDown {
+  position: relative;
+  display: inline-block;
+}
+.dropDownContent {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.show {
+  display: block;
+  position: absolute;
+  background-color: #f1f1f1;
+  margin-top: 9.5px;
+  min-width: 130px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.ddc a {
+  color: black;
+  padding: 10px 10px;
+  text-decoration: none;
+  display: block;
+}
+.ddc a:hover {
+  background: rgb(209, 208, 208);
+}
