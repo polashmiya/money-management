@@ -15,7 +15,9 @@ const UserHome = () => {
           <div className="search">
             <input type="text" placeholder="Search" />
           </div>
-          <div className="addIcon btn"> + </div>
+          <div className="addIcon btn">
+            <Link to="/create">+</Link>
+          </div>
         </div>
       </div>
       <div className="homePage">
