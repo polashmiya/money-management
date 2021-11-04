@@ -15,7 +15,7 @@ import { UtilsModule } from './modules/uitls/utils.module';
       port: Number(process.env.POSTGRES_PORT),
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.DATABASE_NAME,
+      database: process.env.POSTGRES_DB,
       autoLoadEntities:
         process.env.POSTGRES_AUTO_LOAD_ENTITIES === 'true' ? true : false,
       synchronize: process.env.POSTGRES_SYNCHRONIZE === 'true' ? true : false,
