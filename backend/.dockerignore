@@ -1,0 +1,10 @@
+.git
+.github
+.gitignore
+.vscode
+.dockerignore
+Dockerfile
+node_modules
+dist
+e2e
+*.md

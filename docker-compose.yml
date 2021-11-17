@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    env_file: ./backend/.env
+    volumes:
+      - db:/var/lib/postgresql/data/pgdata
+    ports:
+      - '5430:5432'
+
+    # pg_admin:
+    #     image: dpage/pgadmin4:latest
+    #     container_name: pgadmin4
+    #     environment:
+    #         - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-dbadmin@admin.com}
+    #         - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin@2021}
+    #         - PGADMIN_LISTEN_PORT=8020
+    #     depends_on:
+    #         - db
+    #     volumes:
+    #         - db:/var/lib/postgresql/data/pgdata
+    #     ports:
+    #         - '8020:8020'
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file: ./backend/.env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  db:
