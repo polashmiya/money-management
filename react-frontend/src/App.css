@@ -266,3 +266,31 @@ tr:nth-child(even) {
 .ddc a:hover {
   background: rgb(209, 208, 208);
 }
+
+/* Create Page */
+
+.create {
+  margin-top: 50px;
+}
+.create form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.create input {
+  margin-bottom: 10px;
+}
+.create select {
+  padding: 8px;
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.create .btn {
+  width: 100%;
+  margin-top: 10px;
+}
+textarea {
+  resize: none;
+}
