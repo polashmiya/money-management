@@ -42,4 +42,8 @@ export class UserEntity extends BaseEntity {
 
   @VersionColumn()
   version: number;
+
+  async comparePassword(password: string): Promise<boolean> {
+    return await compare(password, this.password);
+  }
 }

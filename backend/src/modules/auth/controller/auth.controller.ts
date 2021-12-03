@@ -33,14 +33,4 @@ export class AuthController {
   ): Promise<ResponceData> {
     return this.authService.signin(userCredential);
   }
-
-  @Put('changePassword')
-  @ApiBody({ type: ChangePasswordDTO })
-  changePassword(@Body(ValidationPipe) body: Partial<ChangePasswordDTO>) {
-    try {
-      return this.authService.changePassword(body);
-    } catch (error) {
-      return error;
-    }
-  }
 }
