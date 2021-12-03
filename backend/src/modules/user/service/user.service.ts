@@ -10,7 +10,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ResponceData } from 'src/model/responce-data.model';
 import { responceData } from 'src/utils/responce-data.util';
 import { ChangePasswordDTO } from 'src/modules/auth/dto/changePassword.dto';
 
@@ -21,7 +20,7 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getAll(): Promise<ResponceData> {
+  async getAll() {
     try {
       const [users, count] = await this.userRepository.findAndCount({});
       const data = { users, total: count };
@@ -32,24 +31,21 @@ export class UserService {
     }
   }
 
-  async getById(id: string): Promise<ResponceData> {
+  async getById(id: string) {
     try {
       const user = await this.userRepository.findOne({ where: { id } });
 
       if (!user) {
-        throw new NotFoundException();
+        return new NotFoundException('User Not Found');
       }
 
       return responceData('Get User Success', HttpStatus.OK, user);
     } catch (error) {
-      if (error.status === HttpStatus.NOT_FOUND) {
-        throw new NotFoundException('User Not Found');
-      }
       throw new InternalServerErrorException();
     }
   }
 
-  async update(id: string, user: UpdateUserDto): Promise<ResponceData> {
+  async update(id: string, user: UpdateUserDto) {
     try {
       const updateRes = await this.userRepository.update(id, user);
 
@@ -57,12 +53,9 @@ export class UserService {
         const findUser = await this.userRepository.findOne({ where: { id } });
         return responceData('Update User Success', HttpStatus.OK, findUser);
       } else {
-        throw new BadRequestException();
+        return new BadRequestException('Update User Failed');
       }
     } catch (error) {
-      if (error.status === HttpStatus.BAD_REQUEST) {
-        throw new BadRequestException('Update User Failed');
-      }
       throw new InternalServerErrorException();
     }
   }
@@ -74,12 +67,9 @@ export class UserService {
       if (res.affected) {
         return responceData('Delete User Success', HttpStatus.OK, res);
       } else {
-        throw new BadRequestException();
+        return new BadRequestException('Delete User Failed');
       }
     } catch (error) {
-      if (error.status === HttpStatus.BAD_REQUEST) {
-        throw new BadRequestException('Delete User Failed');
-      }
       throw new InternalServerErrorException();
     }
   }
@@ -92,7 +82,7 @@ export class UserService {
       });
 
       if (!user) {
-        throw new BadRequestException('Invalid Email or Password');
+        return new BadRequestException('Invalid Email or Password');
       }
 
       const isPasswordCorrect = await user.comparePassword(
@@ -100,7 +90,7 @@ export class UserService {
       );
 
       if (!isPasswordCorrect) {
-        throw new BadRequestException('Invalid Email or Password');
+        return new BadRequestException('Invalid Email or Password');
       }
 
       const hashedPassword = await hash(
@@ -119,12 +109,9 @@ export class UserService {
 
         return responceData('Password Update Success', HttpStatus.OK, data);
       } else {
-        throw new InternalServerErrorException();
+        return new BadRequestException();
       }
     } catch (error) {
-      if (error.status === HttpStatus.BAD_REQUEST) {
-        throw new BadRequestException('Invalid Email or Password');
-      }
       throw new InternalServerErrorException('Internal Server Error');
     }
   }

@@ -9,7 +9,6 @@ import {
   Delete,
   ValidationPipe,
 } from '@nestjs/common';
-import { ResponceData } from 'src/model/responce-data.model';
 import { ExpenseService } from '../service/expense.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
@@ -19,31 +18,48 @@ export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
   @Get()
-  getAll(): Promise<ResponceData> {
-    return this.expenseService.getAll();
+  getAll() {
+    try {
+      return this.expenseService.getAll();
+    } catch (error) {
+      return error;
+    }
   }
 
   @Get(':id')
-  getById(@Param('id') id: string): Promise<ResponceData> {
-    return this.expenseService.getById(id);
+  getById(@Param('id') id: string) {
+    try {
+      return this.expenseService.getById(id);
+    } catch (error) {
+      return error;
+    }
   }
 
   @Post()
-  create(@Body(ValidationPipe) expense: ExpenseDto): Promise<ResponceData> {
-    return this.expenseService.create(expense);
+  create(@Body(ValidationPipe) expense: ExpenseDto) {
+    try {
+      return this.expenseService.create(expense);
+    } catch (error) {
+      return error;
+    }
   }
 
   @Put(':id')
   @ApiBody({ type: ExpenseDto })
-  update(
-    @Param('id') id: string,
-    @Body() expense: Partial<ExpenseDto>,
-  ): Promise<ResponceData> {
-    return this.expenseService.update(id, expense);
+  update(@Param('id') id: string, @Body() expense: Partial<ExpenseDto>) {
+    try {
+      return this.expenseService.update(id, expense);
+    } catch (error) {
+      return error;
+    }
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): Promise<ResponceData> {
-    return this.expenseService.delete(id);
+  delete(@Param('id') id: string) {
+    try {
+      return this.expenseService.delete(id);
+    } catch (error) {
+      return error;
+    }
   }
 }

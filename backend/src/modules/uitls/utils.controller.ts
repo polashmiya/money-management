@@ -1,4 +1,3 @@
-import { ResponceData } from './../../model/responce-data.model';
 import { EmailDTO } from './dto/sendEmail.dto';
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { UitlsService } from './utils.service';
@@ -11,7 +10,11 @@ export class UtilsController {
 
   @Post('sendEmail')
   @HttpCode(HttpStatus.OK)
-  sendEmail(@Body() body: EmailDTO): Promise<ResponceData> {
-    return this.uitlsService.sendEmail(body);
+  sendEmail(@Body() body: EmailDTO) {
+    try {
+      return this.uitlsService.sendEmail(body);
+    } catch (error) {
+      return error;
+    }
   }
 }

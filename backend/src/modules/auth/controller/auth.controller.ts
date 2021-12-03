@@ -1,6 +1,5 @@
-import { ChangePasswordDTO } from './../dto/changePassword.dto';
 import { LoginDTO } from './../dto/login.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Post,
@@ -11,7 +10,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
-import { ResponceData } from 'src/model/responce-data.model';
 import { SignUpDTO } from '../dto/signup.dto';
 
 @ApiTags('Auth')
@@ -20,17 +18,21 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  signup(
-    @Body(ValidationPipe) userCredential: SignUpDTO,
-  ): Promise<ResponceData> {
-    return this.authService.signup(userCredential);
+  signup(@Body(ValidationPipe) userCredential: SignUpDTO) {
+    try {
+      return this.authService.signup(userCredential);
+    } catch (error) {
+      return error;
+    }
   }
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  signin(
-    @Body(ValidationPipe) userCredential: LoginDTO,
-  ): Promise<ResponceData> {
-    return this.authService.signin(userCredential);
+  signin(@Body(ValidationPipe) userCredential: LoginDTO) {
+    try {
+      return this.authService.signin(userCredential);
+    } catch (error) {
+      return error;
+    }
   }
 }
