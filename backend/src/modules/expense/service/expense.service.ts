@@ -1,5 +1,4 @@
 import { ExpenseDto } from './../dto/expence.dto';
-import { ResponceData } from './../../../model/responce-data.model';
 import { responceData } from './../../../utils/responce-data.util';
 import { ExpenseEntity } from '../entity/expense.entity';
 import {
@@ -19,7 +18,7 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<ExpenseEntity>,
   ) {}
 
-  async getAll(): Promise<ResponceData> {
+  async getAll() {
     try {
       const [expence, count] = await this.expenseRepository.findAndCount();
       const data = { expence, total: count };
@@ -30,24 +29,21 @@ export class ExpenseService {
     }
   }
 
-  async getById(id: string): Promise<ResponceData> {
+  async getById(id: string) {
     try {
       const data = await this.expenseRepository.findOne({ where: { id } });
 
       if (!data) {
-        throw new NotFoundException();
+        return new NotFoundException('Expense or Income Not Found');
       }
 
       return responceData('Get Data Success', HttpStatus.OK, data);
     } catch (error) {
-      if (error.status === HttpStatus.NOT_FOUND) {
-        throw new NotFoundException('Expense or Income Not Found');
-      }
       throw new InternalServerErrorException();
     }
   }
 
-  async create(expense: ExpenseDto): Promise<ResponceData> {
+  async create(expense: ExpenseDto) {
     try {
       const createExpense = this.expenseRepository.create(expense);
       const expenseRes = await createExpense.save();
@@ -58,10 +54,7 @@ export class ExpenseService {
     }
   }
 
-  async update(
-    id: string,
-    expense: Partial<ExpenseDto>,
-  ): Promise<ResponceData> {
+  async update(id: string, expense: Partial<ExpenseDto>) {
     try {
       const res = await this.expenseRepository.update(id, expense);
 
@@ -71,25 +64,21 @@ export class ExpenseService {
         });
         return responceData('Update Success', HttpStatus.OK, expenseRes);
       }
-      throw new BadRequestException();
+      return new BadRequestException('No Expense or Income found');
     } catch (error) {
-      if (error.status === HttpStatus.BAD_REQUEST) {
-        throw new BadRequestException('No Expense or Income found');
-      }
       throw new InternalServerErrorException();
     }
   }
 
-  async delete(id: string): Promise<ResponceData> {
+  async delete(id: string) {
     try {
       const delRes = await this.expenseRepository.delete(id);
       if (delRes.affected) {
         return responceData('Delete Success', HttpStatus.OK);
       }
-      throw new BadRequestException();
+      return new BadRequestException('No Expense or Income Found');
     } catch (error) {
       if (error.status === HttpStatus.BAD_REQUEST) {
-        throw new BadRequestException('No Expense or Income Found');
       }
       throw new InternalServerErrorException();
     }

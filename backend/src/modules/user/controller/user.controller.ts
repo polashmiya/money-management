@@ -1,4 +1,4 @@
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -8,24 +8,32 @@ import {
   Delete,
   ValidationPipe,
 } from '@nestjs/common';
-import { ResponceData } from 'src/model/responce-data.model';
 import { UpdateUserDto } from '../dto/user.dto';
 import { UserService } from '../service/user.service';
 import { ChangePasswordDTO } from 'src/modules/auth/dto/changePassword.dto';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAll(): Promise<ResponceData> {
-    return this.userService.getAll();
+  getAll() {
+    try {
+      return this.userService.getAll();
+    } catch (error) {
+      return error;
+    }
   }
 
   @Get(':id')
-  getById(@Param('id') id: string): Promise<ResponceData> {
-    return this.userService.getById(id);
+  getById(@Param('id') id: string) {
+    try {
+      return this.userService.getById(id);
+    } catch (error) {
+      return error;
+    }
   }
 
   @Put('changePassword')
@@ -39,15 +47,20 @@ export class UserController {
   }
 
   @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() user: UpdateUserDto,
-  ): Promise<ResponceData> {
-    return this.userService.update(id, user);
+  update(@Param('id') id: string, @Body() user: UpdateUserDto) {
+    try {
+      return this.userService.update(id, user);
+    } catch (error) {
+      return error;
+    }
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
-    return this.userService.delete(id);
+    try {
+      return this.userService.delete(id);
+    } catch (error) {
+      return error;
+    }
   }
 }

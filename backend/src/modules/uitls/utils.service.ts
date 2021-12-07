@@ -1,4 +1,3 @@
-import { ResponceData } from './../../model/responce-data.model';
 import { EmailDTO } from './dto/sendEmail.dto';
 import { Injectable } from '@nestjs/common';
 
@@ -7,7 +6,7 @@ import { sendEmail } from 'src/utils/general.util';
 
 @Injectable()
 export class UitlsService {
-  sendEmail(body: EmailDTO): Promise<ResponceData> {
+  sendEmail(body: EmailDTO) {
     // const filePath = 'test.pdf';
     // const attachment = fs.readFileSync(filePath).toString('base64');
 

@@ -1,7 +1,6 @@
 import { LoginDTO } from './../dto/login.dto';
 import { responceData } from './../../../utils/responce-data.util';
 import {
-  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
@@ -12,10 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '../../user/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ResponceData } from 'src/model/responce-data.model';
 import { SignUpDTO } from '../dto/signup.dto';
-import { ChangePasswordDTO } from '../dto/changePassword.dto';
-import { compare, hash } from 'bcrypt';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(userCredential: SignUpDTO): Promise<ResponceData> {
+  async signup(userCredential: SignUpDTO) {
     try {
       const hashedPassword = await hash(
         userCredential.password,
@@ -44,7 +41,7 @@ export class AuthService {
     }
   }
 
-  async signin(userCredential: LoginDTO): Promise<ResponceData> {
+  async signin(userCredential: LoginDTO) {
     try {
       const user = await this.userRepository.findOne({
         where: { email: userCredential.email },
@@ -58,11 +55,8 @@ export class AuthService {
         return responceData('Login Success', HttpStatus.OK, { token });
       }
 
-      throw new UnauthorizedException('Invalid Credentials');
+      return new UnauthorizedException('Invalid Credentials');
     } catch (error) {
-      if (error.status === HttpStatus.UNAUTHORIZED) {
-        throw new UnauthorizedException('Invalid Credentials');
-      }
       throw new InternalServerErrorException();
     }
   }
