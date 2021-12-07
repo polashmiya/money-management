@@ -1,8 +1,7 @@
-import { ExpenseEntity } from './../../expense/entity/expense.entity';
+import { Expense } from './../../expense/entity/expense.entity';
 import { compare, hash } from 'bcrypt';
 import {
   BaseEntity,
-  BeforeInsert,
   CreateDateColumn,
   OneToMany,
   UpdateDateColumn,
@@ -12,7 +11,7 @@ import { Column, Entity } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
-export class UserEntity extends BaseEntity {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,8 +30,8 @@ export class UserEntity extends BaseEntity {
   @Column({ nullable: true, type: 'date' })
   dob: Date;
 
-  @OneToMany(() => ExpenseEntity, (expense) => expense.user)
-  expense: ExpenseEntity[];
+  @OneToMany(() => Expense, (expense) => expense.user)
+  expense: Expense[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,7 +1,7 @@
 import { hash } from 'bcrypt';
 import { UpdateUserDto } from './../dto/user.dto';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../entity/user.entity';
+import { User } from '../entity/user.entity';
 import {
   BadRequestException,
   HttpStatus,
@@ -16,8 +16,8 @@ import { ChangePasswordDTO } from 'src/modules/auth/dto/changePassword.dto';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async getAll() {

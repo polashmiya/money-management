@@ -1,6 +1,6 @@
 import { ExpenseDto } from './../dto/expence.dto';
 import { responceData } from './../../../utils/responce-data.util';
-import { ExpenseEntity } from '../entity/expense.entity';
+import { Expense } from '../entity/expense.entity';
 import {
   BadRequestException,
   HttpStatus,
@@ -14,8 +14,8 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class ExpenseService {
   constructor(
-    @InjectRepository(ExpenseEntity)
-    private readonly expenseRepository: Repository<ExpenseEntity>,
+    @InjectRepository(Expense)
+    private readonly expenseRepository: Repository<Expense>,
   ) {}
 
   async getAll() {

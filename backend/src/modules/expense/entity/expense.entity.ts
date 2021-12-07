@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/modules/user/entity/user.entity';
+import { User } from 'src/modules/user/entity/user.entity';
 import {
   BaseEntity,
   Column,
@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity('expenses')
-export class ExpenseEntity extends BaseEntity {
+export class Expense extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -27,8 +27,8 @@ export class ExpenseEntity extends BaseEntity {
   @Column({ type: 'date' })
   expenseDate: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.expense, { onDelete: 'CASCADE' })
-  user: UserEntity;
+  @ManyToOne(() => User, (user) => user.expense, { onDelete: 'CASCADE' })
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;
