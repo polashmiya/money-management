@@ -11,6 +11,8 @@ import {
 import { UpdateUserDto } from '../dto/user.dto';
 import { UserService } from '../service/user.service';
 import { ChangePasswordDTO } from 'src/modules/auth/dto/changePassword.dto';
+import { GetUser } from 'src/modules/auth/decorator/user.decorator';
+import { User } from '../entity/user.entity';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -38,9 +40,12 @@ export class UserController {
 
   @Put('changePassword')
   @ApiBody({ type: ChangePasswordDTO })
-  changePassword(@Body(ValidationPipe) body: Partial<ChangePasswordDTO>) {
+  changePassword(
+    @Body(ValidationPipe) body: Partial<ChangePasswordDTO>,
+    @GetUser() user: User,
+  ) {
     try {
-      return this.userService.changePassword(body);
+      return this.userService.changePassword(body, user);
     } catch (error) {
       return error;
     }

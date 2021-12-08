@@ -1,8 +1,13 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { LoginDTO } from './login.dto';
 
-export class ChangePasswordDTO extends LoginDTO {
+export class ChangePasswordDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  password: string;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

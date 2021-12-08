@@ -74,18 +74,24 @@ export class UserService {
     }
   }
 
-  async changePassword(userCredential: Partial<ChangePasswordDTO>) {
+  async changePassword(userCredential: Partial<ChangePasswordDTO>, user: User) {
     try {
-      const user = await this.userRepository.findOne({
-        where: { email: userCredential.email },
+      if (userCredential.password === userCredential.newPassword) {
+        return new BadRequestException(
+          "New Password can't be the same as old Password",
+        );
+      }
+
+      const userRes = await this.userRepository.findOne({
+        where: { email: user.email },
         select: ['id', 'password'],
       });
 
-      if (!user) {
+      if (!userRes) {
         return new BadRequestException('Invalid Email or Password');
       }
 
-      const isPasswordCorrect = await user.comparePassword(
+      const isPasswordCorrect = await userRes.comparePassword(
         userCredential.password,
       );
 
@@ -98,13 +104,13 @@ export class UserService {
         Number(process.env.HASH_ROUNDS),
       );
 
-      const updateRes = await this.userRepository.update(user.id, {
+      const updateRes = await this.userRepository.update(userRes.id, {
         password: hashedPassword,
       });
 
       if (updateRes.affected) {
         const data = await this.userRepository.findOne({
-          where: { email: userCredential.email },
+          where: { email: user.email },
         });
 
         return responceData('Password Update Success', HttpStatus.OK, data);
