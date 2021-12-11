@@ -1,10 +1,12 @@
 import { LoginDTO } from './../dto/login.dto';
 import { responceData } from './../../../utils/responce-data.util';
 import {
+  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -12,7 +14,10 @@ import { User } from '../../user/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SignUpDTO } from '../dto/signup.dto';
-import { hash } from 'bcrypt';
+import { ForgetPasswordDTO } from '../dto/forgetPassword.dto';
+import { OTP } from 'src/utils/otpGenerate.util';
+import { VerificationDTO } from '../dto/verification.dto';
+import { hashedPassword } from 'src/utils/bcript.util';
 
 @Injectable()
 export class AuthService {
@@ -24,12 +29,7 @@ export class AuthService {
 
   async signup(userCredential: SignUpDTO) {
     try {
-      const hashedPassword = await hash(
-        userCredential.password,
-        Number(process.env.HASH_ROUNDS),
-      );
-      userCredential.password = hashedPassword;
-
+      userCredential.password = await hashedPassword(userCredential.password);
       const user = await this.userRepository.save(userCredential);
 
       return responceData('Sign Up Success', HttpStatus.CREATED);
@@ -56,6 +56,65 @@ export class AuthService {
       }
 
       return new UnauthorizedException('Invalid Credentials');
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async forgetPassword(userCredential: ForgetPasswordDTO) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: userCredential.email },
+        select: ['id', 'email'],
+      });
+
+      if (!user) {
+        return new NotFoundException('User Not Found');
+      }
+
+      const otp = OTP.createOtp(6);
+      const updateRes = await this.userRepository.update(user.id, {
+        otp: otp,
+      });
+
+      // add send email code here
+
+      if (updateRes.affected) {
+        return responceData('OTP Send Success', HttpStatus.OK);
+      } else {
+        return new BadRequestException('OTP send fail');
+      }
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async verification(userCredential: VerificationDTO) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: userCredential.email },
+        select: ['id', 'email', 'password', 'otp'],
+      });
+
+      if (!user) {
+        return new NotFoundException('User Not Found');
+      }
+
+      if (user.otp !== userCredential.otp) {
+        return new BadRequestException('Invalid OTP');
+      }
+
+      const newHashedPassword = await hashedPassword(userCredential.password);
+      const updateRes = await this.userRepository.update(user.id, {
+        otp: null,
+        password: newHashedPassword,
+      });
+
+      if (updateRes.affected) {
+        return responceData('OTP Send Success', HttpStatus.OK);
+      } else {
+        return new BadRequestException('OTP send fail');
+      }
     } catch (error) {
       throw new InternalServerErrorException();
     }

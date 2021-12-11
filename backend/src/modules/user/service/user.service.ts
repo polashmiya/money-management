@@ -1,4 +1,3 @@
-import { hash } from 'bcrypt';
 import { UpdateUserDto } from './../dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
@@ -12,6 +11,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { responceData } from 'src/utils/responce-data.util';
 import { ChangePasswordDTO } from 'src/modules/auth/dto/changePassword.dto';
+import { hashedPassword } from 'src/utils/bcript.util';
 
 @Injectable()
 export class UserService {
@@ -99,13 +99,12 @@ export class UserService {
         return new BadRequestException('Invalid Email or Password');
       }
 
-      const hashedPassword = await hash(
+      const newHashedPassword = await hashedPassword(
         userCredential.newPassword,
-        Number(process.env.HASH_ROUNDS),
       );
 
       const updateRes = await this.userRepository.update(userRes.id, {
-        password: hashedPassword,
+        password: newHashedPassword,
       });
 
       if (updateRes.affected) {
