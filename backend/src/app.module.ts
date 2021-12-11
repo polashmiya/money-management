@@ -5,6 +5,8 @@ import { ExpenseModule } from './modules/expense/expense.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { UtilsModule } from './modules/uitls/utils.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guard/jwt.gurad';
 
 @Module({
   imports: [
@@ -25,6 +27,12 @@ import { UtilsModule } from './modules/uitls/utils.module';
     AuthModule,
     UserModule,
     UtilsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule {}

@@ -13,6 +13,7 @@ async function bootstrap() {
       .setTitle('Money Management & Todo Application')
       .setDescription('The Money Management & Todo Application API description')
       .setVersion('1.0')
+      .addBearerAuth()
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
