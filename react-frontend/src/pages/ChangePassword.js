@@ -7,13 +7,14 @@ import { AuthContext } from "../context/AuthContext";
 import jwtDecode from "jwt-decode";
 import { Link, Redirect } from "react-router-dom";
 toast.configure();
-const Login = () => {
-  const [isLogin, setIsLogin] = useState(false);
+const ChangePassword = () => {
   const [error, setError] = useState("");
-  const { setData, authAxios } = useContext(AuthContext);
+  const [isChanged, setIsChanged] = useState(false);
+  const { setData } = useContext(AuthContext);
   const initialValue = {
     email: "",
     password: "",
+    newPassword: "",
   };
   const validSchema = Yup.object({
     email: Yup.string()
@@ -26,28 +27,18 @@ const Login = () => {
 
   const onSubmit = (values) => {
     axios
-      .post("auth/signin", values)
+      .put("auth/change-password", values)
       .then((response) => {
-        localStorage.setItem("token", response.data.data.token);
-        const data = jwtDecode(response.data.data.token);
-        // authAxios
-        //   .get(`users/${data.id}`)
-        //   .then((res) => {
-        //     console.log(res.data.data);
-        //     setData(res.data.data);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
-        setIsLogin(true);
-        toast("Login Successfull");
+        setIsChanged(true);
+        setData(null);
+        toast("Password Update Success");
       })
       .catch((error) => {
         setError("Email Or Password Is Wrong! ");
       });
   };
-  if (isLogin) {
-    return <Redirect to={"/"} />;
+  if (isChanged) {
+    return <Redirect to={"/login"} />;
   }
   return (
     <Formik
@@ -56,7 +47,7 @@ const Login = () => {
       validationSchema={validSchema}>
       <div className="form">
         <Form>
-          <div className="login-title">Login</div>
+          <div className="login-title">Change Password</div>
           <div className="errors error">{error}</div>
           <div className="form-control">
             <label htmlFor="email"> Email </label>
@@ -71,43 +62,36 @@ const Login = () => {
             </ErrorMessage>
           </div>
           <div className="form-control">
-            <label htmlFor="password"> Password </label>
+            <label htmlFor="password"> Old Password </label>
             <Field
               type="password"
               id="password"
               name="password"
-              placeholder="Enter Your Password"
+              placeholder="Enter Your Old Password"
+            />
+            <ErrorMessage name="password">
+              {(errmsg) => <div className="errors"> {errmsg} </div>}
+            </ErrorMessage>
+          </div>
+          <div className="form-control">
+            <label htmlFor="password">New Password </label>
+            <Field
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              placeholder="Enter Your New Password"
             />
             <ErrorMessage name="password">
               {(errmsg) => <div className="errors"> {errmsg} </div>}
             </ErrorMessage>
           </div>
           <button type="submit" className="btn">
-            Log In
+            Submit
           </button>
-          <span style={{ marginLeft: "10px", color: "red" }}>
-            Not Any Account?
-            <Link to="/signup" className="link">
-              <span
-                style={{
-                  marginLeft: "5px",
-                  color: "blue",
-                  fontSize: "18px",
-                  cursor: "pointer",
-                }}>
-                SignUp
-              </span>
-            </Link>
-          </span>
-          <p>
-            <Link to="/forgotpassword" className="link">
-              Forgot Password?
-            </Link>
-          </p>
         </Form>
       </div>
     </Formik>
   );
 };
 
-export default Login;
+export default ChangePassword;

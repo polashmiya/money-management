@@ -10,8 +10,10 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserHome from "./pages/UserHome";
+import ResetPassword from "./pages/ResetPassword";
 import { AuthProvider } from "./context/AuthContext";
 import Create from "./pages/Create";
+import ChangePassword from "./pages/ChangePassword";
 function App() {
   return (
     <AuthProvider>
@@ -25,6 +27,8 @@ function App() {
             <Route path="/forgotPassword" component={ForgotPassword} />
             {/* <Route path="/home" component={UserHome} /> */}
             <Route path="/create" component={Create} />
+            <Route path="/reset:id" component={ResetPassword} />
+            <Route path="/changePassword" component={ChangePassword} />
             <ProtectedRoute path="/profile" component={Profile} auth={true} />
             <Route path="*" component={NotFound} />
           </Switch>

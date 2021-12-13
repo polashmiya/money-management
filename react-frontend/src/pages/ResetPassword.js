@@ -9,7 +9,6 @@ import { Link, Redirect } from "react-router-dom";
 toast.configure();
 const Login = () => {
   const [isLogin, setIsLogin] = useState(false);
-  const [error, setError] = useState("");
   const { setData, authAxios } = useContext(AuthContext);
   const initialValue = {
     email: "",
@@ -30,20 +29,20 @@ const Login = () => {
       .then((response) => {
         localStorage.setItem("token", response.data.data.token);
         const data = jwtDecode(response.data.data.token);
-        // authAxios
-        //   .get(`users/${data.id}`)
-        //   .then((res) => {
-        //     console.log(res.data.data);
-        //     setData(res.data.data);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
+        authAxios
+          .get(`users/${data.id}`)
+          .then((res) => {
+            console.log(res.data.data);
+            setData(res.data.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         setIsLogin(true);
         toast("Login Successfull");
       })
       .catch((error) => {
-        setError("Email Or Password Is Wrong! ");
+        console.log(error);
       });
   };
   if (isLogin) {
@@ -56,8 +55,6 @@ const Login = () => {
       validationSchema={validSchema}>
       <div className="form">
         <Form>
-          <div className="login-title">Login</div>
-          <div className="errors error">{error}</div>
           <div className="form-control">
             <label htmlFor="email"> Email </label>
             <Field
