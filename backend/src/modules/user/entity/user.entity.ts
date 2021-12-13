@@ -1,5 +1,5 @@
 import { Expense } from './../../expense/entity/expense.entity';
-import { compare, hash } from 'bcrypt';
+import { compare } from 'bcrypt';
 import {
   BaseEntity,
   CreateDateColumn,
@@ -29,6 +29,9 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true, type: 'date' })
   dob: Date;
+
+  @Column({ nullable: true })
+  otp: number;
 
   @OneToMany(() => Expense, (expense) => expense.user)
   expense: Expense[];

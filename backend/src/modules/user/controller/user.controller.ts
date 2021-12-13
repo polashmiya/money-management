@@ -38,7 +38,7 @@ export class UserController {
     }
   }
 
-  @Put('changePassword')
+  @Put('change-password')
   @ApiBody({ type: ChangePasswordDTO })
   changePassword(
     @Body(ValidationPipe) body: Partial<ChangePasswordDTO>,

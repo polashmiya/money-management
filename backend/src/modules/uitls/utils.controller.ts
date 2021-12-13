@@ -9,7 +9,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class UtilsController {
   constructor(private readonly uitlsService: UitlsService) {}
 
-  @Post('sendEmail')
+  @Post('send-email')
   @HttpCode(HttpStatus.OK)
   sendEmail(@Body() body: EmailDTO) {
     try {

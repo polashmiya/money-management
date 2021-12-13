@@ -11,6 +11,8 @@ import {
 import { AuthService } from '../service/auth.service';
 import { SignUpDTO } from '../dto/signup.dto';
 import { Public } from '../decorator/public.decorator';
+import { ForgetPasswordDTO } from '../dto/forgetPassword.dto';
+import { VerificationDTO } from '../dto/verification.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,6 +34,26 @@ export class AuthController {
   signin(@Body(ValidationPipe) userCredential: LoginDTO) {
     try {
       return this.authService.signin(userCredential);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Post('forget-password')
+  @HttpCode(HttpStatus.OK)
+  forgetPassword(@Body(ValidationPipe) userCredential: ForgetPasswordDTO) {
+    try {
+      return this.authService.forgetPassword(userCredential);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Post('verification')
+  @HttpCode(HttpStatus.OK)
+  verification(@Body(ValidationPipe) userCredential: VerificationDTO) {
+    try {
+      return this.authService.verification(userCredential);
     } catch (error) {
       return error;
     }
