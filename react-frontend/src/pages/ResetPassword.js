@@ -9,7 +9,6 @@ import { Link, Redirect } from "react-router-dom";
 toast.configure();
 const Login = () => {
   const [isLogin, setIsLogin] = useState(false);
-  const [error, setError] = useState("");
   const { setData } = useContext(AuthContext);
   const initialValue = {
     email: "",
@@ -43,7 +42,7 @@ const Login = () => {
         toast("Login Successfull");
       })
       .catch((error) => {
-        setError("Email Or Password Is Wrong! ");
+        console.log(error);
       });
   };
   if (isLogin) {
@@ -56,8 +55,6 @@ const Login = () => {
       validationSchema={validSchema}>
       <div className="form">
         <Form>
-          <div className="login-title">Login</div>
-          <div className="errors error">{error}</div>
           <div className="form-control">
             <label htmlFor="email"> Email </label>
             <Field

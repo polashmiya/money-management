@@ -23,6 +23,7 @@ const ForgotPassword = () => {
       validationSchema={validationSchema}>
       <div className="form">
         <Form>
+          <div className="login-title">Forgot Password</div>
           <div className="form-control">
             <label htmlFor="email"> E-mail </label>
             <Field
@@ -35,7 +36,7 @@ const ForgotPassword = () => {
               {(errMsg) => <div className="errors">{errMsg}</div>}
             </ErrorMessage>
           </div>
-          <button className="btn">Forgot Password</button>
+          <button className="btn">Submit</button>
         </Form>
       </div>
     </Formik>

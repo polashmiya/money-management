@@ -1,9 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-
+import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
+toast.configure();
 const DropDown = () => {
   const [show, setShow] = useState(false);
+  const { setData } = useContext(AuthContext);
   const ref = useRef(null);
+  const logOut = () => {
+    localStorage.clear();
+    setData(null);
+    toast("Logout Success");
+  };
   useEffect(() => {
     // Function for click event
     function handleOutsideClick(event) {
@@ -18,6 +26,7 @@ const DropDown = () => {
   const onClick = () => {
     setShow(!show);
   };
+
   return (
     <div className="dropDown">
       <div className="dropDownIcon" onClick={onClick} ref={ref}>
@@ -25,9 +34,11 @@ const DropDown = () => {
       </div>
       <div className={show ? " ddc show" : " ddc dropDownContent"}>
         <Link to="/profile">Profile</Link>
-        <Link to="/reset">Reset Password</Link>
+        <Link to="/changePassword">Change Password</Link>
         <Link to="/settings">Settings</Link>
-        <Link to="/signout">Sign Out</Link>
+        <Link to="/" onClick={logOut}>
+          Sign Out
+        </Link>
       </div>
     </div>
   );

@@ -1,13 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import DropDown from "./DropDown";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import jwt from "jwt-decode";
+import axios from "axios";
 const Navbar = () => {
   const style = {
     marginRight: "20px",
   };
-  const { auth } = useContext(AuthContext);
-  console.log(auth);
+
+  const { user } = useContext(AuthContext);
   return (
     <header>
       <div className="container">
@@ -15,10 +17,10 @@ const Navbar = () => {
           <div className="brand">
             <Link to="/">MoneyManagement</Link>
           </div>
-          {auth ? (
+          {user ? (
             <ul className="nav-links">
-              <div className="profileBrand" style={{marginRight:"10px"}}>
-                <Link to="/profile">Md Polash Miya</Link>
+              <div className="profileBrand" style={{ marginRight: "10px" }}>
+                <Link to="/profile">{user.name}</Link>
               </div>
               <DropDown />
             </ul>

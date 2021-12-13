@@ -123,10 +123,18 @@ header .nav-links li:last-child {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.login-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: rgb(48, 38, 85);
+  text-align: center;
+  padding-bottom: 25px;
+}
 label {
   display: flex;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
   font-size: 16px;
+  font-weight: bold;
 }
 input {
   width: 300px;
@@ -148,7 +156,7 @@ input:focus {
   width: 100px;
   padding: 5px;
   cursor: pointer;
-  font-size: 20px;
+  logifont-size: 20px;
   outline: none;
   border: 1px solid grey;
   border-radius: 3px;
@@ -161,6 +169,13 @@ input:focus {
 }
 .errors {
   color: red;
+}
+.error {
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  padding-bottom: 20px;
+  color: #f70606;
 }
 .link {
   text-decoration: inherit;
